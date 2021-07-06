@@ -1,5 +1,17 @@
 import { DateTime } from "luxon";
 
+import { configure, getLogger } from "log4js";
+configure({
+    appenders: {
+        file: {type: 'fileSync', filename: 'logs/debug.log' }
+    },
+    categories: {
+        default: { appenders: ['file'], level: 'debug'}
+    }
+});
+
+const logger = getLogger('log.log');
+
 class Account {
     name: string;
     balance: number = 0;
@@ -71,7 +83,10 @@ function listTransactions(account: Account): void {
 
 /* read file */
 import fs from 'fs';
-const records: string[] = fs.readFileSync('data/Transactions2014.csv')
+logger.level = "debug";
+logger.debug('Reading file');
+// const records: string[] = fs.readFileSync('data/Transactions2014.csv')
+const records: string[] = fs.readFileSync('data/DodgyTransactions2015.csv')
     .toString()
     .split('\n')
     .slice(1, -1);
