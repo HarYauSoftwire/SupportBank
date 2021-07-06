@@ -25,23 +25,23 @@ class Transaction {
     }
 }
 
-const accounts: Account[] = [];
+const accounts: Map<string, Account> = new Map();
 
 function processRecord(record: string) : Transaction {
     let fields: string[] = record.split(',');
     let transaction: Transaction = new Transaction(fields[1], fields[2], fields[3], fields[0], Number(fields[4]) * 100);
 
-    let senderAccount = accounts.find(account => account.name == transaction.sender);
-    if (!senderAccount) {
-        senderAccount = new Account(transaction.sender);
-        accounts.push(senderAccount);
+    const senderKey = transaction.sender.toLowerCase();
+    let senderAccount: Account = accounts.get(senderKey) || new Account(transaction.sender);
+    if (!accounts.has(senderKey)) {
+        accounts.set(senderKey, senderAccount);
     }
     senderAccount.balance -= transaction.amount;
 
-    let recAccount = accounts.find(account => account.name == transaction.recipient);
-    if (!recAccount) {
-        recAccount = new Account(transaction.recipient);
-        accounts.push(recAccount);
+    const recKey = transaction.recipient.toLowerCase();
+    let recAccount: Account = accounts.get(recKey) || new Account(transaction.recipient);
+    if (!accounts.has(recKey)) {
+        accounts.set(recKey, recAccount);
     }
     recAccount.balance += transaction.amount;
 
@@ -91,7 +91,7 @@ rl.question("Please input a query...\n", query => {
     }
     else if (query.startsWith("list ")){
         const requestedName: string = query.slice(5);
-        const requestedAccount = accounts.find(account => account.name.toLowerCase() == requestedName);
+        const requestedAccount = accounts.get(requestedName);
         if (!requestedAccount) {
             console.log(`Account with requested name "${requestedName}" was not found.`);
         }
