@@ -1,18 +1,25 @@
 import { Transaction } from "./models";
 import { xml2js } from "xml-js";
-import { getLogger } from "log4js";
 import { DateTime } from "luxon";
 import { readRecords } from "./readHelper";
 
-const logger = getLogger('log');
+type TransactionXml = {
+    _attributes: {Date: string};
+    Description: {_text: string};
+    Value: {_text: string};
+    Parties: {
+        From: {_text: string};
+        To: {_text: string};
+    };
+}
 
 export function readTransactionsFromXml(fileData: string): Transaction[] {
     const xmlObject: any = xml2js(fileData, {compact: true});
-    const records: Array<any> = xmlObject.TransactionList.SupportTransaction;
+    const records: TransactionXml[] = xmlObject.TransactionList.SupportTransaction;
     return readRecords(records, readXmlRecord);
 }
 
-function readXmlRecord(record: any, index: number) : Transaction {
+function readXmlRecord(record: TransactionXml, index: number) : Transaction {
     const sender: string = record.Parties.From._text;
     const recipient: string = record.Parties.To._text;
     const narrative: string = record.Description._text;

@@ -1,9 +1,6 @@
-import { getLogger } from "log4js";
 import { DateTime } from "luxon";
 import { Transaction } from "./models";
 import { readRecords } from "./readHelper";
-
-const logger = getLogger('log');
 
 export function readTransactionsFromCsv(fileData: string): Transaction[] {
     const records: string[] = fileData.split('\n').slice(1, -1);
@@ -12,9 +9,6 @@ export function readTransactionsFromCsv(fileData: string): Transaction[] {
 
 function readCsvRecord(record: string, index: number) : Transaction {
     let fields: string[] = record.split(',');
-    logger.debug(`Number of fields in record is ${fields.length}`);
-    logger.debug(`Date string is ${fields[0]}`);
-    logger.debug(`Amount is ${fields[4]}`);
     const date = DateTime.fromFormat(fields[0], 'dd/LL/yyyy');
     if (!date.isValid) {
         throw new Error(`Entry ${index + 1}: Date is not valid: ${date.invalidExplanation}`);

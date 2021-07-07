@@ -25,10 +25,9 @@ export function readTransactionsFromFile(filename: string) : Transaction[] {
     }
 }
 
-export function readRecords(records: any[], readRecord: (record: any, index: number) => Transaction) : Transaction[] {
+export function readRecords<T>(records: T[], readRecord: (record: T, index: number) => Transaction) : Transaction[] {
     const transactions: Transaction[] = [];
     records.forEach((record, index) => {
-        // logger.debug(`Processing record ${index + 1}`);
         try {
             const transaction: Transaction = readRecord(record, index);
             transactions.push(transaction);
