@@ -1,6 +1,8 @@
 import { configure, getLogger } from "log4js";
-import readline from 'readline';
 import { Account, Transaction } from "./models";
+import readline from 'readline';
+import { readTransactionsFromCsv } from "./csvHelper";
+import { processTransactions } from "./accountHelper";
 
 configure({
     appenders: {
@@ -12,42 +14,9 @@ configure({
         default: { appenders: ['file', 'info'], level: 'debug' }
     }
 });
-
 const logger = getLogger('log');
 
-
 const accounts: Map<string, Account> = new Map();
-
-function readCsvRecord(record: string) : Transaction {
-    let fields: string[] = record.split(',');
-    logger.debug(`Number of fields in record is ${fields.length}`);
-    logger.debug(`Date string is ${fields[0]}`);
-    logger.debug(`Amount is ${fields[4]}`);
-    return new Transaction(fields[1], fields[2], fields[3], fields[0], Number(fields[4]) * 100);
-}
-
-function processTransaction(transaction: Transaction) {
-    const senderKey = transaction.sender.toLowerCase();
-    let senderAccount: Account = accounts.get(senderKey) || new Account(transaction.sender);
-    if (!accounts.has(senderKey)) {
-        accounts.set(senderKey, senderAccount);
-    }
-    senderAccount.balance -= transaction.amount;
-
-    const recKey = transaction.recipient.toLowerCase();
-    let recAccount: Account = accounts.get(recKey) || new Account(transaction.recipient);
-    if (!accounts.has(recKey)) {
-        accounts.set(recKey, recAccount);
-    }
-    recAccount.balance += transaction.amount;
-}
-
-function readCsvRecords(records: string[]) : Transaction[] {
-    return records.map((record, index) => {
-        logger.debug(`Processing record ${index + 1}`);
-        return readCsvRecord(record);
-    });
-}
 
 function listAccounts(): void {
     accounts.forEach(account => {
@@ -64,21 +33,6 @@ function listTransactions(account: Account): void {
             console.log(`${transaction.date.toISODate()}\tFrom\t${transaction.sender}\t£${transaction.amount / 100}\t${transaction.narrative}`);
         }
     })
-}
-
-function readTransactionsFromFile(filename: string): Transaction[] {
-    const fs = require('fs');
-    logger.info('Reading transactions file');
-    const records: string[] = fs.readFileSync(filename)
-        .toString()
-        .split('\n')
-        .slice(1, -1);
-    return readCsvRecords(records);
-}
-
-function processTransactions(transactions: Transaction[]) : void {
-    logger.info('Processing transactions');
-    transactions.forEach(processTransaction);
 }
 
 function processQuery(query: string) {
@@ -101,8 +55,8 @@ function processQuery(query: string) {
 }
 
 /* user command */
-const transactions: Transaction[] = readTransactionsFromFile('data/DodgyTransactions2015.csv');
-processTransactions(transactions);
+const transactions: Transaction[] = readTransactionsFromCsv('data/DodgyTransactions2015.csv');
+processTransactions(transactions, accounts);
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
