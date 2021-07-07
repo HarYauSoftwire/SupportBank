@@ -18,13 +18,15 @@ const logger = getLogger('log');
 
 const accounts: Map<string, Account> = new Map();
 
-function processCsvRecord(record: string) : Transaction {
+function readCsvRecord(record: string) : Transaction {
     let fields: string[] = record.split(',');
     logger.debug(`Number of fields in record is ${fields.length}`);
     logger.debug(`Date string is ${fields[0]}`);
     logger.debug(`Amount is ${fields[4]}`);
-    let transaction: Transaction = new Transaction(fields[1], fields[2], fields[3], fields[0], Number(fields[4]) * 100);
+    return new Transaction(fields[1], fields[2], fields[3], fields[0], Number(fields[4]) * 100);
+}
 
+function processTransaction(transaction: Transaction) {
     const senderKey = transaction.sender.toLowerCase();
     let senderAccount: Account = accounts.get(senderKey) || new Account(transaction.sender);
     if (!accounts.has(senderKey)) {
@@ -38,14 +40,12 @@ function processCsvRecord(record: string) : Transaction {
         accounts.set(recKey, recAccount);
     }
     recAccount.balance += transaction.amount;
-
-    return transaction;
 }
 
-function processCsvRecords(records: string[]) : Transaction[] {
+function readCsvRecords(records: string[]) : Transaction[] {
     return records.map((record, index) => {
         logger.debug(`Processing record ${index + 1}`);
-        return processCsvRecord(record);
+        return readCsvRecord(record);
     });
 }
 
@@ -73,8 +73,12 @@ function readTransactionsFromFile(filename: string): Transaction[] {
         .toString()
         .split('\n')
         .slice(1, -1);
+    return readCsvRecords(records);
+}
+
+function processTransactions(transactions: Transaction[]) : void {
     logger.info('Processing transactions');
-    return processCsvRecords(records);
+    transactions.forEach(processTransaction);
 }
 
 function processQuery(query: string) {
@@ -98,8 +102,7 @@ function processQuery(query: string) {
 
 /* user command */
 const transactions: Transaction[] = readTransactionsFromFile('data/DodgyTransactions2015.csv');
-logger.info('Processed transactions.')
-
+processTransactions(transactions);
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
