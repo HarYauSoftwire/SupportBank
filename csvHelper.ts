@@ -24,3 +24,18 @@ function readCsvRecord(record: string, index: number) : Transaction {
         date, 
         amountPence);
 }
+
+function transactionToCsv(transaction: Transaction) : string {
+    return [
+        transaction.date.toFormat('dd/LL/yyyy'),
+        transaction.sender,
+        transaction.recipient,
+        transaction.narrative,
+        (transaction.amountPence / 100).toString()
+    ].join(',');
+}
+
+export function transactionsToCsvData(records: Transaction[]) : string {
+    const csvArray: string[] = records.map(transactionToCsv);
+    return "Date,From,To,Narrative,Amount\n" + csvArray.join('\n') + '\n';
+}

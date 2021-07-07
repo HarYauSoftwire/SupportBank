@@ -46,6 +46,6 @@ function TransactionToJson(transaction: Transaction) : TransactionJson {
     }
 }
 
-export function transactionsJsonToString(records: Transaction[]) : string {
+export function transactionsToJsonData(records: Transaction[]) : string {
     return JSON.stringify(records.map(TransactionToJson), null, '  ');
 }
