@@ -3,6 +3,7 @@ import { Account, Transaction } from "./models";
 import readline from 'readline';
 import { readTransactionsFromCsv } from "./csvHelper";
 import { processTransactions } from "./accountHelper";
+import { readTransactionsFromJson } from "./jsonHelper";
 
 configure({
     appenders: {
@@ -55,7 +56,8 @@ function processQuery(query: string) {
 }
 
 /* user command */
-const transactions: Transaction[] = readTransactionsFromCsv('data/DodgyTransactions2015.csv');
+// const transactions: Transaction[] = readTransactionsFromCsv('data/DodgyTransactions2015.csv');
+const transactions: Transaction[] = readTransactionsFromJson('data/Transactions2013.json');
 processTransactions(transactions, accounts);
 const rl = readline.createInterface({
     input: process.stdin,

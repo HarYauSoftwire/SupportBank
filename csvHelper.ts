@@ -7,7 +7,7 @@ const logger = getLogger('log');
 
 export function readTransactionsFromCsv(filename: string): Transaction[] {
     const fs = require('fs');
-    logger.info('Reading transactions file');
+    logger.info('Reading transactions CSV file');
     const records: string[] = fs.readFileSync(filename)
         .toString()
         .split('\n')
