@@ -1,6 +1,7 @@
-import { DateTime } from "luxon";
-
 import { configure, getLogger } from "log4js";
+import readline from 'readline';
+import { Account, Transaction } from "./models";
+
 configure({
     appenders: {
         file: {type: 'fileSync', filename: 'logs/debug.log' },
@@ -14,34 +15,10 @@ configure({
 
 const logger = getLogger('log');
 
-class Account {
-    name: string;
-    balance: number = 0;
-
-    constructor(name: string) {
-        this.name = name;
-    }
-}
-
-class Transaction {
-    sender: string;
-    recipient: string;
-    narrative: string;
-    date: DateTime;
-    amount: number;
-
-    constructor(sender: string, recipient: string, narrative: string, date: string, amount: number) {
-        this.sender = sender;
-        this.recipient = recipient;
-        this.narrative = narrative;
-        this.date = DateTime.fromFormat(date, 'dd/LL/yyyy');
-        this.amount = amount;
-    }
-}
 
 const accounts: Map<string, Account> = new Map();
 
-function processRecord(record: string) : Transaction {
+function processCsvRecord(record: string) : Transaction {
     let fields: string[] = record.split(',');
     logger.debug(`Number of fields in record is ${fields.length}`);
     logger.debug(`Date string is ${fields[0]}`);
@@ -65,8 +42,11 @@ function processRecord(record: string) : Transaction {
     return transaction;
 }
 
-function processRecords(records: string[]) : Transaction[] {
-    return records.map(record => processRecord(record));
+function processCsvRecords(records: string[]) : Transaction[] {
+    return records.map((record, index) => {
+        logger.debug(`Processing record ${index + 1}`);
+        return processCsvRecord(record);
+    });
 }
 
 function listAccounts(): void {
@@ -94,7 +74,7 @@ function readTransactionsFromFile(filename: string): Transaction[] {
         .split('\n')
         .slice(1, -1);
     logger.info('Processing transactions');
-    return processRecords(records);
+    return processCsvRecords(records);
 }
 
 function processQuery(query: string) {
@@ -119,7 +99,7 @@ function processQuery(query: string) {
 /* user command */
 const transactions: Transaction[] = readTransactionsFromFile('data/DodgyTransactions2015.csv');
 logger.info('Processed transactions.')
-import readline from 'readline';
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
