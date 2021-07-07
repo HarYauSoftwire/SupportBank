@@ -5,6 +5,7 @@ import { readTransactionsFromCsv } from "./csvHelper";
 import { listAccounts, listTransactionsFromName, processTransactions } from "./accountHelper";
 import { readTransactionsFromJson } from "./jsonHelper";
 import { logError } from "./errorHelper";
+import { readTransactionsFromXml } from "./xmlHelper";
 
 configure({
     appenders: {
@@ -56,6 +57,9 @@ function readTransactionsFromFile(filename: string) : Transaction[] {
     }
     else if (filename.endsWith(".json")) {
         return readTransactionsFromJson(fileData);
+    }
+    else if (filename.endsWith(".xml")) {
+        return readTransactionsFromXml(fileData);
     }
     else {
         throw new Error("Specified file does not have recognised extension");
