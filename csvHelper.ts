@@ -38,7 +38,7 @@ function readCsvRecord(record: string, index: number) : Transaction {
     if (!date.isValid) {
         throw logError(`Entry ${index + 1}: Date is not valid: ${date.invalidExplanation}`);
     }
-    const amountPence = Number(fields[4]) * 100;
+    const amountPence = Math.round(Number(fields[4]) * 100);
     if (Number.isNaN(amountPence)) {
         throw logError(`Entry ${index + 1}: "${fields[4]}" is not a valid number`);
     }

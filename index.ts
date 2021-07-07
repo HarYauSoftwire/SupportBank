@@ -4,6 +4,7 @@ import readline from 'readline';
 import { readTransactionsFromCsv } from "./csvHelper";
 import { processTransactions } from "./accountHelper";
 import { readTransactionsFromJson } from "./jsonHelper";
+import { formatter } from "./moneyHelper";
 
 configure({
     appenders: {
@@ -21,17 +22,26 @@ const accounts: Map<string, Account> = new Map();
 
 function listAccounts(): void {
     accounts.forEach(account => {
-        console.log(`${account.name}\t £${account.balance / 100}`);
+        console.log(account.name + '\t' +
+            formatter.format(account.balance / 100));
     });
 }
 
 function listTransactions(account: Account): void {
     transactions.forEach(transaction => {
         if (transaction.sender == account.name) {
-            console.log(`${transaction.date.toISODate()}\tTo\t${transaction.recipient}\t£${transaction.amountPence / 100}\t${transaction.narrative}`);
+            console.log(transaction.date.toISODate() + '\t' +
+                'To\t' +
+                transaction.recipient + '\t' +
+                formatter.format(transaction.amountPence / 100) + '\t' +
+                transaction.narrative);
         }
         else if (transaction.recipient == account.name) {
-            console.log(`${transaction.date.toISODate()}\tFrom\t${transaction.sender}\t£${transaction.amountPence / 100}\t${transaction.narrative}`);
+            console.log(transaction.date.toISODate() + '\t' +
+                'From\t' +
+                transaction.sender + '\t' +
+                formatter.format(transaction.amountPence / 100) + '\t' +
+                transaction.narrative);
         }
     })
 }

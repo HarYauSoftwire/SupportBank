@@ -36,7 +36,7 @@ function readJsonRecord(record: any, index: number) : Transaction {
     if (!date.isValid) {
         throw logError(`Entry ${index + 1}: Date is not valid: ${date.invalidExplanation}`);
     }
-    const amountPence: number = record['Amount'] * 100;
+    const amountPence: number = Math.round(record['Amount'] * 100);
     if (Number.isNaN(amountPence)) {
         throw logError(`Entry ${index + 1}: "${record['Amount']}" is not a valid number`);
     }
