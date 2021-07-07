@@ -5,12 +5,8 @@ import { Transaction } from "./models";
 
 const logger = getLogger('log');
 
-export function readTransactionsFromJson(filename: string): Transaction[] {
-    const fs = require('fs');
-    logger.info('Reading transactions JSON file');
-    const recordsString: string = fs.readFileSync(filename)
-        .toString();
-    const records: Array<object> = JSON.parse(recordsString);
+export function readTransactionsFromJson(fileData: string): Transaction[] {
+    const records: Array<object> = JSON.parse(fileData);
     return readJson(records);
 }
 

@@ -48,11 +48,14 @@ function processQuery(query: string) {
 }
 
 function readTransactionsFromFile(filename: string) : Transaction[] {
+    const fs = require('fs');
+    logger.info('Reading transactions file');
+    const fileData: string = fs.readFileSync(filename).toString();
     if (filename.endsWith(".csv")) {
-        return readTransactionsFromCsv(filename);
+        return readTransactionsFromCsv(fileData);
     }
     else if (filename.endsWith(".json")) {
-        return readTransactionsFromJson(filename);
+        return readTransactionsFromJson(fileData);
     }
     else {
         throw new Error("Specified file does not have recognised extension");

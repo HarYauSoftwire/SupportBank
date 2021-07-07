@@ -5,13 +5,8 @@ import { Transaction } from "./models";
 
 const logger = getLogger('log');
 
-export function readTransactionsFromCsv(filename: string): Transaction[] {
-    const fs = require('fs');
-    logger.info('Reading transactions CSV file');
-    const records: string[] = fs.readFileSync(filename)
-        .toString()
-        .split('\n')
-        .slice(1, -1);
+export function readTransactionsFromCsv(fileData: string): Transaction[] {
+    const records: string[] = fileData.split('\n').slice(1, -1);
     return readCsvRecords(records);
 }
 
