@@ -3,14 +3,16 @@ import { DateTime } from "luxon";
 import { configure, getLogger } from "log4js";
 configure({
     appenders: {
-        file: {type: 'fileSync', filename: 'logs/debug.log' }
+        file: {type: 'fileSync', filename: 'logs/debug.log' },
+        out: { type: 'stdout' },
+        info: { type: 'logLevelFilter', appender: 'out', level: 'info' }
     },
     categories: {
-        default: { appenders: ['file'], level: 'debug'}
+        default: { appenders: ['file', 'info'], level: 'debug' }
     }
 });
 
-const logger = getLogger('log.log');
+const logger = getLogger('log');
 
 class Account {
     name: string;
@@ -41,6 +43,9 @@ const accounts: Map<string, Account> = new Map();
 
 function processRecord(record: string) : Transaction {
     let fields: string[] = record.split(',');
+    logger.debug(`Number of fields in record is ${fields.length}`);
+    logger.debug(`Date string is ${fields[0]}`);
+    logger.debug(`Amount is ${fields[4]}`);
     let transaction: Transaction = new Transaction(fields[1], fields[2], fields[3], fields[0], Number(fields[4]) * 100);
 
     const senderKey = transaction.sender.toLowerCase();
@@ -81,42 +86,46 @@ function listTransactions(account: Account): void {
     })
 }
 
-/* read file */
-import fs from 'fs';
-logger.level = "debug";
-logger.debug('Reading file');
-// const records: string[] = fs.readFileSync('data/Transactions2014.csv')
-const records: string[] = fs.readFileSync('data/DodgyTransactions2015.csv')
-    .toString()
-    .split('\n')
-    .slice(1, -1);
-const transactions: Transaction[] = processRecords(records);
-//console.log(accounts);
+function readTransactionsFromFile(filename: string): Transaction[] {
+    const fs = require('fs');
+    logger.info('Reading transactions file');
+    const records: string[] = fs.readFileSync(filename)
+        .toString()
+        .split('\n')
+        .slice(1, -1);
+    logger.info('Processing transactions');
+    return processRecords(records);
+}
 
-/* user command */
-import readline from 'readline';
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-rl.question("Please input a query...\n", query => {
-    query = query.toLowerCase();
+function processQuery(query: string) {
     if (query == 'list all') {
         listAccounts();
     }
-    else if (query.startsWith("list ")){
+    else if (query.startsWith("list ")) {
         const requestedName: string = query.slice(5);
         const requestedAccount = accounts.get(requestedName);
         if (!requestedAccount) {
-            console.log(`Account with requested name "${requestedName}" was not found.`);
+            logger.error(`Account with requested name "${requestedName}" was not found.`);
         }
         else {
             listTransactions(requestedAccount);
         }
     }
     else {
-        console.log("Unknown command.");
+        logger.error(`Unknown command "${query}"`);
     }
-    console.log("Exiting...");
+}
+
+/* user command */
+const transactions: Transaction[] = readTransactionsFromFile('data/DodgyTransactions2015.csv');
+logger.info('Processed transactions.')
+import readline from 'readline';
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+rl.question("Please input a query...\n", query => {
+    processQuery(query.toLowerCase());
+    logger.info("Exiting program");
     rl.close();
 })
