@@ -1,4 +1,5 @@
 import { getLogger } from "log4js";
+import { DateTime } from "luxon";
 import { Transaction } from "./models";
 
 const logger = getLogger('log');
@@ -25,5 +26,10 @@ function readCsvRecord(record: string) : Transaction {
     logger.debug(`Number of fields in record is ${fields.length}`);
     logger.debug(`Date string is ${fields[0]}`);
     logger.debug(`Amount is ${fields[4]}`);
-    return new Transaction(fields[1], fields[2], fields[3], fields[0], Number(fields[4]) * 100);
+    return new Transaction(
+        fields[1], 
+        fields[2], 
+        fields[3], 
+        DateTime.fromFormat(fields[0], 'dd/LL/yyyy'), 
+        Number(fields[4]) * 100);
 }

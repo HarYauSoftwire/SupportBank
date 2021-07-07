@@ -16,11 +16,17 @@ export class Transaction {
     date: DateTime;
     amount: number;
 
-    constructor(sender: string, recipient: string, narrative: string, date: string, amount: number) {
+    constructor(
+        sender: string, 
+        recipient: string, 
+        narrative: string, 
+        date: DateTime, 
+        amount: number) 
+    {
         this.sender = sender;
         this.recipient = recipient;
         this.narrative = narrative;
-        this.date = DateTime.fromFormat(date, 'dd/LL/yyyy');
+        this.date = date;
         this.amount = amount;
     }
 }
