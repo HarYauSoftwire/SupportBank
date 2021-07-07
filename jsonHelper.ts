@@ -35,3 +35,17 @@ function readJsonRecord(record: TransactionJson, index: number) : Transaction {
         amountPence
     );
 }
+
+function TransactionToJson(transaction: Transaction) : TransactionJson {
+    return {
+        Date: transaction.date.toISO(),
+        FromAccount: transaction.sender,
+        ToAccount: transaction.recipient,
+        Narrative: transaction.narrative,
+        Amount: transaction.amountPence / 100
+    }
+}
+
+export function transactionsJsonToString(records: Transaction[]) : string {
+    return JSON.stringify(records.map(TransactionToJson), null, '  ');
+}

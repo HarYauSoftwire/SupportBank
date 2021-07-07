@@ -4,6 +4,7 @@ import readline from 'readline';
 import { listAccounts, listTransactionsFromName, processTransactions } from "./accountHelper";
 import { logError } from "./errorHelper";
 import { readTransactionsFromFile } from "./readHelper";
+import { writeTransactionsToFile } from "./writeHelper";
 
 configure({
     appenders: {
@@ -31,6 +32,14 @@ function processQuery(query: string) {
         try {
             transactions = readTransactionsFromFile(inFilename);
             processTransactions(transactions);
+        } catch (error) {
+            logError(error);
+        }
+    }
+    else if (query.startsWith("export file ")) {
+        const outFilename: string = query.slice("import file ".length);
+        try {
+            writeTransactionsToFile(outFilename, transactions);
         } catch (error) {
             logError(error);
         }
