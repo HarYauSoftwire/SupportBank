@@ -1,29 +1,15 @@
 import { Transaction } from "./models";
 import { xml2js } from "xml-js";
 import { getLogger } from "log4js";
-import { logError } from "./errorHelper";
 import { DateTime } from "luxon";
+import { readRecords } from "./readHelper";
 
 const logger = getLogger('log');
 
 export function readTransactionsFromXml(fileData: string): Transaction[] {
     const xmlObject: any = xml2js(fileData, {compact: true});
     const records: Array<any> = xmlObject.TransactionList.SupportTransaction;
-    return readXml(records);
-}
-
-function readXml(records: Array<any>) : Transaction[] {
-    const transactions: Transaction[] = [];
-    records.forEach((record, index) => {
-        logger.debug(`Processing record ${index + 1}`);
-        try {
-            const transaction: Transaction = readXmlRecord(record, index);
-            transactions.push(transaction);
-        } catch (error) {
-            logError(error);
-        }
-    });
-    return transactions;
+    return readRecords(records, readXmlRecord);
 }
 
 function readXmlRecord(record: any, index: number) : Transaction {

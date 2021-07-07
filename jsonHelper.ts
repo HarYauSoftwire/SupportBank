@@ -1,27 +1,13 @@
 import { getLogger } from "log4js";
 import { DateTime } from "luxon";
-import { logError } from "./errorHelper";
 import { Transaction } from "./models";
+import { readRecords } from "./readHelper";
 
 const logger = getLogger('log');
 
 export function readTransactionsFromJson(fileData: string): Transaction[] {
     const records: Array<object> = JSON.parse(fileData);
-    return readJson(records);
-}
-
-function readJson(records: Array<object>) : Transaction[] {
-    const transactions: Transaction[] = [];
-    records.forEach((record, index) => {
-        logger.debug(`Processing record ${index + 1}`);
-        try {
-            const transaction: Transaction = readJsonRecord(record, index);
-            transactions.push(transaction);
-        } catch (error) {
-            logError(error);
-        }
-    });
-    return transactions;
+    return readRecords(records, readJsonRecord);
 }
 
 function readJsonRecord(record: any, index: number) : Transaction {

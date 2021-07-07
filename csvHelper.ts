@@ -1,27 +1,13 @@
 import { getLogger } from "log4js";
 import { DateTime } from "luxon";
-import { logError } from "./errorHelper";
 import { Transaction } from "./models";
+import { readRecords } from "./readHelper";
 
 const logger = getLogger('log');
 
 export function readTransactionsFromCsv(fileData: string): Transaction[] {
     const records: string[] = fileData.split('\n').slice(1, -1);
-    return readCsvRecords(records);
-}
-
-function readCsvRecords(records: string[]) : Transaction[] {
-    const transactions: Transaction[] = [];
-    records.forEach((record, index) => {
-        logger.debug(`Processing record ${index + 1}`);
-        try {
-            const transaction: Transaction = readCsvRecord(record, index);
-            transactions.push(transaction);
-        } catch (error) {
-            logError(error);
-        }
-    });
-    return transactions;
+    return readRecords(records, readCsvRecord);
 }
 
 function readCsvRecord(record: string, index: number) : Transaction {

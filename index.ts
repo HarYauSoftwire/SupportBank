@@ -1,11 +1,9 @@
 import { configure, getLogger } from "log4js";
 import { Transaction } from "./models";
 import readline from 'readline';
-import { readTransactionsFromCsv } from "./csvHelper";
 import { listAccounts, listTransactionsFromName, processTransactions } from "./accountHelper";
-import { readTransactionsFromJson } from "./jsonHelper";
 import { logError } from "./errorHelper";
-import { readTransactionsFromXml } from "./xmlHelper";
+import { readTransactionsFromFile } from "./readHelper";
 
 configure({
     appenders: {
@@ -46,24 +44,6 @@ function processQuery(query: string) {
         logger.error(`Unknown command "${query}"`);
     }
     console.log("Please input a query...");
-}
-
-function readTransactionsFromFile(filename: string) : Transaction[] {
-    const fs = require('fs');
-    logger.info('Reading transactions file');
-    const fileData: string = fs.readFileSync(filename).toString();
-    if (filename.endsWith(".csv")) {
-        return readTransactionsFromCsv(fileData);
-    }
-    else if (filename.endsWith(".json")) {
-        return readTransactionsFromJson(fileData);
-    }
-    else if (filename.endsWith(".xml")) {
-        return readTransactionsFromXml(fileData);
-    }
-    else {
-        throw new Error("Specified file does not have recognised extension");
-    }
 }
 
 /* user command */
