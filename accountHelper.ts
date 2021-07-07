@@ -14,12 +14,12 @@ function processTransaction(transaction: Transaction, accounts: Map<string, Acco
     if (!accounts.has(senderKey)) {
         accounts.set(senderKey, senderAccount);
     }
-    senderAccount.balance -= transaction.amount;
+    senderAccount.balance -= transaction.amountPence;
 
     const recKey = transaction.recipient.toLowerCase();
     let recAccount: Account = accounts.get(recKey) || new Account(transaction.recipient);
     if (!accounts.has(recKey)) {
         accounts.set(recKey, recAccount);
     }
-    recAccount.balance += transaction.amount;
+    recAccount.balance += transaction.amountPence;
 }

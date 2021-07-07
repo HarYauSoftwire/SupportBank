@@ -14,7 +14,7 @@ export class Transaction {
     recipient: string;
     narrative: string;
     date: DateTime;
-    amount: number;
+    amountPence: number;
 
     constructor(
         sender: string, 
@@ -27,6 +27,6 @@ export class Transaction {
         this.recipient = recipient;
         this.narrative = narrative;
         this.date = date;
-        this.amount = amount;
+        this.amountPence = amount;
     }
 }

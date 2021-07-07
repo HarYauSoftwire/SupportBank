@@ -27,10 +27,10 @@ function listAccounts(): void {
 function listTransactions(account: Account): void {
     transactions.forEach(transaction => {
         if (transaction.sender == account.name) {
-            console.log(`${transaction.date.toISODate()}\tTo\t${transaction.recipient}\t£${transaction.amount / 100}\t${transaction.narrative}`);
+            console.log(`${transaction.date.toISODate()}\tTo\t${transaction.recipient}\t£${transaction.amountPence / 100}\t${transaction.narrative}`);
         }
         else if (transaction.recipient == account.name) {
-            console.log(`${transaction.date.toISODate()}\tFrom\t${transaction.sender}\t£${transaction.amount / 100}\t${transaction.narrative}`);
+            console.log(`${transaction.date.toISODate()}\tFrom\t${transaction.sender}\t£${transaction.amountPence / 100}\t${transaction.narrative}`);
         }
     })
 }
