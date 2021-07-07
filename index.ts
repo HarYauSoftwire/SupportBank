@@ -60,9 +60,15 @@ function processQuery(query: string) {
             listTransactions(requestedAccount);
         }
     }
+    else if (query == 'exit') {
+        logger.info("Exiting program");
+        rl.close();
+        return;
+    }
     else {
         logger.error(`Unknown command "${query}"`);
     }
+    console.log("Please input a query...");
 }
 
 /* user command */
@@ -73,8 +79,7 @@ const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-rl.question("Please input a query...\n", query => {
+rl.on('line', query => {
     processQuery(query.toLowerCase());
-    logger.info("Exiting program");
-    rl.close();
-})
+});
+console.log("Please input a query...");
