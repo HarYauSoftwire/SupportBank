@@ -3,7 +3,7 @@ import { Transaction } from "./models";
 import { readTransactionsFromCsv } from "./csvHelper";
 import { readTransactionsFromJson } from "./jsonHelper";
 import { readTransactionsFromXml } from "./xmlHelper";
-import { logError } from "./errorHelper";
+import logError from "./errorHelper";
 
 const logger = getLogger('log');
 

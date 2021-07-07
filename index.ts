@@ -2,7 +2,7 @@ import { configure, getLogger } from "log4js";
 import { Transaction } from "./models";
 import readline from 'readline';
 import { listAccounts, listTransactionsFromName, processTransactions } from "./accountHelper";
-import { logError } from "./errorHelper";
+import logError from "./errorHelper";
 import { readTransactionsFromFile } from "./readHelper";
 import { writeTransactionsToFile } from "./writeHelper";
 

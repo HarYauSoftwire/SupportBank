@@ -1,5 +1,5 @@
 import { Transaction } from "./models";
-import { xml2js } from "xml-js";
+import { js2xml, xml2js } from "xml-js";
 import { DateTime } from "luxon";
 import { readRecords } from "./readHelper";
 
@@ -39,4 +39,34 @@ function readXmlRecord(record: TransactionXml, index: number) : Transaction {
         date,
         amountPence
     );
+}
+
+function transactionToXml(transaction: Transaction) : TransactionXml {
+    return {
+        _attributes: {
+            Date: transaction.date.diff(DateTime.fromISO('1900-01-01'), 'days')
+                .days.toString()
+        },
+        Description: {_text: transaction.narrative},
+        Value: {_text: (transaction.amountPence / 100).toString()},
+        Parties: {
+            From: {_text: transaction.sender},
+            To: {_text: transaction.recipient},
+        }
+    }
+}
+
+export function transactionsToXmlData(records: Transaction[]) : string {
+    const rootXmlObject = {
+        _declaration: {
+            _attributes: {
+                version: '1.0',
+                encoding: 'utf-8'
+            }
+        },
+        TransactionList: {
+            SupportTransaction: records.map(transactionToXml)
+        }
+    }
+    return js2xml(rootXmlObject, {compact: true, spaces: 2});
 }

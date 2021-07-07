@@ -2,9 +2,9 @@ import { getLogger } from "log4js";
 import { transactionsToCsvData } from "./csvHelper";
 import { transactionsToJsonData } from "./jsonHelper";
 import { Transaction } from "./models";
+import { transactionsToXmlData } from "./xmlHelper";
 
 const logger = getLogger('log');
-
 
 export function writeTransactionsToFile(filename: string, transactions: Transaction[]) : void {
     logger.info("Writing transactions to file");
@@ -15,9 +15,9 @@ export function writeTransactionsToFile(filename: string, transactions: Transact
     else if (filename.endsWith(".json")) {
         data = transactionsToJsonData(transactions);
     }
-    // else if (filename.endsWith(".xml")) {
-    //     return readTransactionsFromXml(fileData);
-    // }
+    else if (filename.endsWith(".xml")) {
+        data = transactionsToXmlData(transactions);
+    }
     else {
         throw new Error("Specified filename does not have recognised extension");
     }

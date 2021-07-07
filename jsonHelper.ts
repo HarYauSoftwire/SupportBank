@@ -36,7 +36,7 @@ function readJsonRecord(record: TransactionJson, index: number) : Transaction {
     );
 }
 
-function TransactionToJson(transaction: Transaction) : TransactionJson {
+function transactionToJson(transaction: Transaction) : TransactionJson {
     return {
         Date: transaction.date.toISO(),
         FromAccount: transaction.sender,
@@ -47,5 +47,5 @@ function TransactionToJson(transaction: Transaction) : TransactionJson {
 }
 
 export function transactionsToJsonData(records: Transaction[]) : string {
-    return JSON.stringify(records.map(TransactionToJson), null, '  ');
+    return JSON.stringify(records.map(transactionToJson), null, '  ');
 }
