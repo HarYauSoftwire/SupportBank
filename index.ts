@@ -4,6 +4,7 @@ import readline from 'readline';
 import { readTransactionsFromCsv } from "./csvHelper";
 import { listAccounts, listTransactionsFromName, processTransactions } from "./accountHelper";
 import { readTransactionsFromJson } from "./jsonHelper";
+import { logError } from "./errorHelper";
 
 configure({
     appenders: {
@@ -26,6 +27,15 @@ function processQuery(query: string) {
         const requestedName: string = query.slice(5);
         listTransactionsFromName(requestedName, transactions);
     }
+    else if (query.startsWith("import file ")) {
+        const inFilename: string = query.slice("import file ".length);
+        try {
+            transactions = readTransactionsFromFile(inFilename);
+            processTransactions(transactions);
+        } catch (error) {
+            
+        }
+    }
     else if (query == 'exit') {
         logger.info("Exiting program");
         rl.close();
@@ -37,10 +47,20 @@ function processQuery(query: string) {
     console.log("Please input a query...");
 }
 
+function readTransactionsFromFile(filename: string) : Transaction[] {
+    if (filename.endsWith(".csv")) {
+        return readTransactionsFromCsv(filename);
+    }
+    else if (filename.endsWith(".json")) {
+        return readTransactionsFromJson(filename);
+    }
+    else {
+        throw logError("Specified file does not have recognised extension");
+    }
+}
+
 /* user command */
-// const transactions: Transaction[] = readTransactionsFromCsv('data/DodgyTransactions2015.csv');
-const transactions: Transaction[] = readTransactionsFromJson('data/Transactions2013.json');
-processTransactions(transactions);
+var transactions: Transaction[];
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
