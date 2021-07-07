@@ -22,7 +22,7 @@ function readJson(records: Array<object>) : Transaction[] {
             const transaction: Transaction = readJsonRecord(record, index);
             transactions.push(transaction);
         } catch (error) {
-            
+            logError(error);
         }
     });
     return transactions;
@@ -34,11 +34,11 @@ function readJsonRecord(record: any, index: number) : Transaction {
     const narrative: string = record['Narrative'];
     const date: DateTime = DateTime.fromISO(record['Date']);
     if (!date.isValid) {
-        throw logError(`Entry ${index + 1}: Date is not valid: ${date.invalidExplanation}`);
+        throw new Error(`Entry ${index + 1}: Date is not valid: ${date.invalidExplanation}`);
     }
     const amountPence: number = Math.round(record['Amount'] * 100);
     if (Number.isNaN(amountPence)) {
-        throw logError(`Entry ${index + 1}: "${record['Amount']}" is not a valid number`);
+        throw new Error(`Entry ${index + 1}: "${record['Amount']}" is not a valid number`);
     }
     return new Transaction(
         sender,

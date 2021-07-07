@@ -23,7 +23,7 @@ function readCsvRecords(records: string[]) : Transaction[] {
             const transaction: Transaction = readCsvRecord(record, index);
             transactions.push(transaction);
         } catch (error) {
-            
+            logError(error);
         }
     });
     return transactions;
@@ -36,11 +36,11 @@ function readCsvRecord(record: string, index: number) : Transaction {
     logger.debug(`Amount is ${fields[4]}`);
     const date = DateTime.fromFormat(fields[0], 'dd/LL/yyyy');
     if (!date.isValid) {
-        throw logError(`Entry ${index + 1}: Date is not valid: ${date.invalidExplanation}`);
+        throw new Error(`Entry ${index + 1}: Date is not valid: ${date.invalidExplanation}`);
     }
     const amountPence = Math.round(Number(fields[4]) * 100);
     if (Number.isNaN(amountPence)) {
-        throw logError(`Entry ${index + 1}: "${fields[4]}" is not a valid number`);
+        throw new Error(`Entry ${index + 1}: "${fields[4]}" is not a valid number`);
     }
     return new Transaction(
         fields[1], 

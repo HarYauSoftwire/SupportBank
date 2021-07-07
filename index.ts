@@ -33,7 +33,7 @@ function processQuery(query: string) {
             transactions = readTransactionsFromFile(inFilename);
             processTransactions(transactions);
         } catch (error) {
-            
+            logError(error);
         }
     }
     else if (query == 'exit') {
@@ -55,7 +55,7 @@ function readTransactionsFromFile(filename: string) : Transaction[] {
         return readTransactionsFromJson(filename);
     }
     else {
-        throw logError("Specified file does not have recognised extension");
+        throw new Error("Specified file does not have recognised extension");
     }
 }
 

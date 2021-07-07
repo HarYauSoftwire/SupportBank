@@ -1,7 +1,6 @@
 import { getLogger } from "log4js";
 const logger = getLogger('log');
 
-export function logError(message: string) : Error {
-    logger.error(message);
-    return new Error(message);
+export function logError(error: Error) : void {
+    logger.error(error.message);
 }
